@@ -13,6 +13,42 @@
   stroke-width: 1px;
 }
 
+/* Add these overrides to ensure colors are properly applied */
+.node rect {
+  fill: var(--fleet-panel-bg) !important;
+  stroke: var(--fleet-border-color) !important;
+}
+
+.node.node-type-Model rect {
+  fill: #477dc0 !important;
+  fill-opacity: 0.2;
+}
+
+.node.node-type-Repository rect {
+  fill: #d09144 !important;
+  fill-opacity: 0.2;
+}
+
+.node.node-type-Service rect {
+  fill: #7eb36a !important;
+  fill-opacity: 0.2;
+}
+
+.node.node-type-Controller rect {
+  fill: #c64f4d !important;
+  fill-opacity: 0.2;
+}
+
+.node.node-type-Middleware rect {
+  fill: #8b67ad !important;
+  fill-opacity: 0.2;
+}
+
+.node.node-type-Other rect {
+  fill: #7099a6 !important;
+  fill-opacity: 0.2;
+}
+
 .node .label {
   font-weight: 500;
 }
@@ -214,4 +250,155 @@
 .tooltip-matches {
   font-size: 12px;
   color: var(--fleet-accent-color);
+}
+
+/* Grouping control styles */
+.grouping-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 1px solid var(--fleet-border-color);
+  padding-left: 12px;
+  margin-left: 8px;
+}
+
+.grouping-controls > span {
+  color: var(--fleet-secondary-text);
+  font-size: 12px;
+}
+
+.select-input {
+  background-color: var(--fleet-bg-color);
+  border: 1px solid var(--fleet-border-color);
+  border-radius: 4px;
+  color: var(--fleet-text-color);
+  padding: 4px 8px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.select-input:hover {
+  border-color: var(--fleet-accent-color);
+}
+
+/* Group node styles */
+.node.group rect {
+  rx: 10px !important;
+  ry: 10px !important;
+  stroke: var(--fleet-accent-color, #3d75d9) !important;
+  stroke-width: 2px !important;
+  stroke-dasharray: 5, 3 !important;
+  fill-opacity: 0.15 !important;
+}
+
+.node.group.hovered rect {
+  stroke: var(--fleet-accent-color, #3d75d9) !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: none !important;
+  fill-opacity: 0.25 !important;
+}
+
+.node.group text {
+  font-weight: bold;
+  font-size: 14px;
+  fill: var(--fleet-secondary-text, #c5c5c5);
+}
+
+.node.group-type-Model rect {
+  fill: rgba(71, 125, 192, 0.2);
+}
+
+.node.group-type-Repository rect {
+  fill: rgba(208, 145, 68, 0.2);
+}
+
+.node.group-type-Service rect {
+  fill: rgba(126, 179, 106, 0.2);
+}
+
+.node.group-type-Controller rect {
+  fill: rgba(198, 79, 77, 0.2);
+}
+
+.node.group-type-Middleware rect {
+  fill: rgba(139, 103, 173, 0.2);
+}
+
+/* Group placeholder node */
+.node.placeholder rect {
+  fill: transparent !important;
+  stroke: none !important;
+}
+
+.node.placeholder text {
+  fill: var(--fleet-secondary-text) !important;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* Group edge styles */
+.edgePath.group-edge path {
+  stroke: var(--fleet-secondary-text) !important;
+  stroke-width: 1px;
+  stroke-dasharray: 3, 3;
+}
+
+.edgeLabel.group-edge-label {
+  fill: var(--fleet-secondary-text) !important;
+  font-style: italic;
+}
+
+/* Add stronger selector for label text */
+.node.group > g.label > g text {
+  font-weight: bold;
+  font-size: 14px;
+  fill: var(--fleet-text-color, #e6e6e6) !important;
+}
+
+/* Add transition effects for smoother UI */
+.node rect,
+.edgePath path {
+  transition: all 0.2s ease-in-out;
+}
+
+.node.group.focused rect {
+  stroke: var(--fleet-accent-color, #3d75d9);
+  stroke-width: 2px;
+  stroke-dasharray: none;
+}
+
+/* Group toggle button */
+.group-toggle {
+  cursor: pointer;
+  fill: var(--fleet-accent-color);
+  stroke: none;
+}
+
+.group-toggle:hover {
+  fill: #4d85e9;
+}
+
+.micro-button {
+  padding: 2px 6px;
+  font-size: 11px;
+  height: 22px;
+}
+
+/* Make group node labels more prominent */
+.node.group g.label text {
+  font-weight: bold !important;
+  font-size: 14px !important;
+  fill: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Add a click effect for groups */
+.node.group.clicked rect {
+  filter: brightness(1.3);
+}
+
+/* Cursor style for groups */
+.node.group {
+  cursor: pointer;
 }

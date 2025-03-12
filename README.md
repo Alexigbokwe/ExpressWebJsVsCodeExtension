@@ -1,11 +1,16 @@
 # ExpresswebJs Extension for Visual Studio Code
 
-This extension provides support for the ExpresswebJs framework, enhancing the development experience with features such as code completion and definition navigation.
+This extension provides support for the ExpresswebJs framework, enhancing the development experience with features such as code completion, definition navigation, and visual relationship diagrams.
 
 ## Features
 
 - **Code Completion**: Get intelligent code suggestions for ExpresswebJs syntax.
 - **Definition Navigation**: Easily navigate to the definitions of ExpresswebJs components.
+- **Object Relationship Visualization**: Visualize relationships between different components in your ExpresswebJs application.
+  - See inheritance hierarchies, dependencies, and other relationships
+  - Filter by relationship type (extends, implements, depends on, imports, instantiates)
+  - Group nodes by directory, type, or package to reduce visual complexity
+  - Interactive diagram with search, zoom, and export capabilities
 
 ## Installation
 

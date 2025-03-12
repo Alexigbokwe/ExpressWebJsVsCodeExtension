@@ -652,6 +652,19 @@ class RelationshipDiagramProvider {
       <span>Instantiates</span>
     </label>
   </div>
+  <div class="grouping-controls">
+    <span>Grouping:</span>
+    <select id="grouping-select" class="select-input">
+      <option value="none">No Grouping</option>
+      <option value="directory">By Directory</option>
+      <option value="type">By Node Type</option>
+      <option value="package">By Package</option>
+    </select>
+    <label class="toggle-control">
+      <input type="checkbox" id="expand-groups" checked>
+      <span>Auto-expand focused group</span>
+    </label>
+  </div>
 </div>
 <div class="actions">
   <button id="export-svg" class="button secondary">Export SVG</button>
@@ -703,6 +716,43 @@ class RelationshipDiagramProvider {
             }
         }
         RelationshipDiagramProvider.instance = undefined;
+    }
+    /**
+     * Refresh the webview
+     */
+    async refreshWebview() {
+        console.log("Refreshing relationship diagram webview");
+        try {
+            if (this.panel) {
+                // Show loading state
+                this.panel.webview.postMessage({ command: "updateLoadingStatus", isLoading: true });
+                // Get relationship data
+                const data = await (0, relationshipAnalyzer_1.analyzeProjectRelationships)();
+                console.log(`Found ${data.nodes.length} nodes and ${data.edges.length} edges`);
+                // Send minimal test data for debugging
+                const testData = {
+                    nodes: data.nodes.slice(0, 5).map((n) => ({
+                        ...n,
+                        methods: n.methods?.slice(0, 2),
+                        properties: n.properties?.slice(0, 2),
+                    })),
+                    edges: data.edges.filter((e) => testData.nodes.some((n) => n.id === e.source) && testData.nodes.some((n) => n.id === e.target)).slice(0, 10),
+                };
+                // Send to webview (use testData for debugging or data for full rendering)
+                this.panel.webview.postMessage({ command: "updateDiagram", data: data });
+                // Hide loading state
+                this.panel.webview.postMessage({ command: "updateLoadingStatus", isLoading: false });
+            }
+        }
+        catch (error) {
+            console.error("Error refreshing relationship diagram:", error);
+            if (this.panel) {
+                this.panel.webview.postMessage({
+                    command: "showError",
+                    error: `Error analyzing relationships: ${error.message || "Unknown error"}`,
+                });
+            }
+        }
     }
 }
 exports.RelationshipDiagramProvider = RelationshipDiagramProvider;
