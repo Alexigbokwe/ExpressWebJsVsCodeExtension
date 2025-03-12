@@ -3,7 +3,7 @@
   "displayName": "ExpresswebJs Extension",
   "description": "A Visual Studio Code extension for the ExpresswebJs framework, providing code completion, navigation, and utilities.",
   "version": "0.1.0",
-  "publisher": "your-name",
+  "publisher": "Chukwuemeka_Igbokwe",
   "engines": {
     "vscode": "^1.50.0"
   },
