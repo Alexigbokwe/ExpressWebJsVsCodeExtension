@@ -1,0 +1,30 @@
+.expresswebjs-category {
+  font-weight: bold;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--vscode-editor-foreground);
+}
+
+.expresswebjs-command {
+  margin-left: 12px;
+  font-size: 12px;
+}
+
+.expresswebjs-icon {
+  margin-right: 5px;
+  opacity: 0.8;
+}
+
+/* Hover state for commands */
+.expresswebjs-command:hover {
+  background-color: var(--vscode-list-hoverBackground);
+  cursor: pointer;
+}
+
+/* Selected state for commands */
+.expresswebjs-command.selected {
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+/* DELETE EVERYTHING BELOW THIS LINE - it's not valid CSS */

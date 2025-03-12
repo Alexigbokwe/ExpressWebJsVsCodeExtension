@@ -134,6 +134,11 @@
   // Set up event listeners
   function setupEventListeners() {
     // Search functionality
+    if (searchButton) {
+      searchButton.addEventListener("click", function () {
+        performSearch();
+      });
+    }
 
     if (resetSearchButton) {
       resetSearchButton.addEventListener("click", resetSearch);
@@ -236,9 +241,9 @@
 
   // Function to perform search
   function performSearch() {
-    const directory = directorySearch.value.trim();
-    const fileName = fileSearch.value.trim();
-    const includeRelatedNodes = includeRelatedCheckbox.checked;
+    const directory = directorySearch ? directorySearch.value.trim() : "";
+    const fileName = fileSearch ? fileSearch.value.trim() : "";
+    const includeRelatedNodes = includeRelatedCheckbox ? includeRelatedCheckbox.checked : true;
 
     updateLoadingState(true);
 
@@ -473,6 +478,15 @@
   // Function to add a single node to the graph
   function addNodeToGraph(g, node) {
     try {
+      // Filter nodes based on search criteria if defined
+      if (state.nodeNameFilter && !node.name.toLowerCase().includes(state.nodeNameFilter)) {
+        return;
+      }
+
+      if (state.directoryFilter && !node.directory.toLowerCase().includes(state.directoryFilter)) {
+        return;
+      }
+
       // Create node label
       const nodeLabel = createNodeLabel(node);
 
@@ -1115,6 +1129,9 @@
   // Initialize UI and event listeners
   initializeUI();
   setupEventListeners();
+
+  // Call reattachSearchHandlers on initialization to ensure search is working
+  reattachSearchHandlers();
 
   // Initial render if data exists in restored state
   if (state.data) {
@@ -1835,5 +1852,46 @@
       // Apply the transform
       svg.transition().duration(750).call(state.renderer.zoomBehavior.transform, d3.zoomIdentity.translate(x, y).scale(scale));
     }
+  }
+
+  // Add this function to your diagram.js file or your relationship diagram provider class:
+
+  function reattachSearchHandlers() {
+    // Get the search input elements
+    const directorySearch = document.getElementById("directory-search");
+    const fileSearch = document.getElementById("file-search");
+
+    if (directorySearch) {
+      // Clear existing listeners to avoid duplicates
+      const newDirectorySearch = directorySearch.cloneNode(true);
+      directorySearch.parentNode.replaceChild(newDirectorySearch, directorySearch);
+
+      // Add event listener for directory search
+      newDirectorySearch.addEventListener("input", (event) => {
+        state.directoryFilter = event.target.value.toLowerCase();
+        renderDiagram();
+      });
+    }
+
+    if (fileSearch) {
+      // Clear existing listeners to avoid duplicates
+      const newFileSearch = fileSearch.cloneNode(true);
+      fileSearch.parentNode.replaceChild(newFileSearch, fileSearch);
+
+      // Add event listener for file search
+      newFileSearch.addEventListener("input", (event) => {
+        state.nodeNameFilter = event.target.value.toLowerCase();
+        renderDiagram();
+      });
+    }
+
+    const searchButton = document.getElementById("search-button");
+    if (searchButton) {
+      const newSearchButton = searchButton.cloneNode(true);
+      searchButton.parentNode.replaceChild(newSearchButton, searchButton);
+      newSearchButton.addEventListener("click", performSearch);
+    }
+
+    console.log("Search handlers reattached");
   }
 })();

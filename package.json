@@ -1,9 +1,9 @@
 {
   "name": "expresswebjs-extension",
-  "displayName": "ExpresswebJs Extension",
+  "displayName": "ExpresswebJs",
   "description": "A Visual Studio Code extension for the ExpresswebJs framework, providing code completion, navigation, and utilities.",
-  "version": "0.1.0",
-  "publisher": "Chukwuemeka_Igbokwe",
+  "version": "0.1.1",
+  "publisher": "ExpressWebJs",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.98.0"
@@ -65,6 +65,27 @@
       {
         "command": "expresswebjs.refreshRelationshipDiagram",
         "title": "ExpresswebJs: Refresh Object Relationship Diagram"
+      },
+      {
+        "command": "expresswebjs.showDiagram",
+        "title": "Show Object Relationships"
+      },
+      {
+        "command": "expresswebjs.generateController",
+        "title": "Generate Controller"
+      },
+      {
+        "command": "expresswebjs.generateModel",
+        "title": "Generate Model"
+      },
+      {
+        "command": "expresswebjs.generateService",
+        "title": "Generate Service"
+      },
+      {
+        "command": "expresswebjs.refreshTreeView",
+        "title": "ExpresswebJs: Refresh Commands View",
+        "icon": "$(refresh)"
       }
     ],
     "snippets": [
@@ -126,7 +147,40 @@
         "mac": "cmd+shift+o",
         "when": "editorTextFocus"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "expresswebjs-explorer",
+          "title": "ExpressWebJs",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "expresswebjs-explorer": [
+        {
+          "id": "expresswebjs-commands",
+          "name": "Commands",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "expresswebjs.refreshTreeView",
+          "when": "view == expresswebjs-commands",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "expresswebjs.executeCommand",
+          "when": "viewItem == expresswebjsCommand"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -15,15 +15,31 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.scaffoldValidation = exports.scaffoldCommand = exports.scaffoldJob = exports.scaffoldServiceProvider = exports.scaffoldMiddleware = exports.scaffoldRoute = exports.scaffoldController = void 0;
+exports.scaffoldController = scaffoldController;
+exports.scaffoldRoute = scaffoldRoute;
+exports.scaffoldMiddleware = scaffoldMiddleware;
+exports.scaffoldServiceProvider = scaffoldServiceProvider;
+exports.scaffoldJob = scaffoldJob;
+exports.scaffoldCommand = scaffoldCommand;
+exports.scaffoldValidation = scaffoldValidation;
 const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
@@ -107,7 +123,6 @@ export class ${convertToPascalCase(controllerName)} extends BaseController {
     const doc = await vscode.workspace.openTextDocument(controllerPath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldController = scaffoldController;
 async function scaffoldRoute() {
     const routeName = await vscode.window.showInputBox({
         prompt: "Enter the name of the route file",
@@ -153,7 +168,6 @@ export default Route.exec;`;
     const doc = await vscode.workspace.openTextDocument(routePath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldRoute = scaffoldRoute;
 async function scaffoldMiddleware() {
     const middlewareName = await vscode.window.showInputBox({
         prompt: "Enter the name of the middleware",
@@ -196,7 +210,6 @@ export default  ${middlewareName};`;
     const doc = await vscode.workspace.openTextDocument(middlewarePath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldMiddleware = scaffoldMiddleware;
 async function scaffoldServiceProvider() {
     const serviceProviderName = await vscode.window.showInputBox({
         prompt: "Enter the name of service provider",
@@ -245,7 +258,6 @@ export class ${convertToPascalCase(serviceProviderName)} extends ServiceProvider
     const doc = await vscode.workspace.openTextDocument(modelPath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldServiceProvider = scaffoldServiceProvider;
 async function scaffoldJob() {
     const jobName = await vscode.window.showInputBox({
         prompt: "Enter the name of the job",
@@ -282,7 +294,6 @@ export class ${jobName} extends ShouldQueue {
     const doc = await vscode.workspace.openTextDocument(jobPath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldJob = scaffoldJob;
 async function scaffoldCommand() {
     const commandName = await vscode.window.showInputBox({
         prompt: "Enter the name of the command",
@@ -331,7 +342,6 @@ export class ${commandName} extends Command {
     const doc = await vscode.workspace.openTextDocument(commandPath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldCommand = scaffoldCommand;
 async function scaffoldValidation() {
     const validationName = await vscode.window.showInputBox({
         prompt: "Enter the name of the validation",
@@ -366,5 +376,4 @@ export class ${validationName} extends FormRequest {
     const doc = await vscode.workspace.openTextDocument(validationPath);
     vscode.window.showTextDocument(doc);
 }
-exports.scaffoldValidation = scaffoldValidation;
 //# sourceMappingURL=scaffolding.js.map

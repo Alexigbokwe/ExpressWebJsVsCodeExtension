@@ -15,48 +15,44 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerCommands = void 0;
+exports.scaffoldValidation = exports.scaffoldCommand = exports.scaffoldJob = exports.scaffoldServiceProvider = exports.scaffoldMiddleware = exports.scaffoldRoute = exports.scaffoldController = void 0;
+exports.registerCommands = registerCommands;
 const vscode = __importStar(require("vscode"));
 const scaffolding_1 = require("./scaffolding");
+Object.defineProperty(exports, "scaffoldController", { enumerable: true, get: function () { return scaffolding_1.scaffoldController; } });
+Object.defineProperty(exports, "scaffoldRoute", { enumerable: true, get: function () { return scaffolding_1.scaffoldRoute; } });
+Object.defineProperty(exports, "scaffoldMiddleware", { enumerable: true, get: function () { return scaffolding_1.scaffoldMiddleware; } });
+Object.defineProperty(exports, "scaffoldServiceProvider", { enumerable: true, get: function () { return scaffolding_1.scaffoldServiceProvider; } });
+Object.defineProperty(exports, "scaffoldJob", { enumerable: true, get: function () { return scaffolding_1.scaffoldJob; } });
+Object.defineProperty(exports, "scaffoldCommand", { enumerable: true, get: function () { return scaffolding_1.scaffoldCommand; } });
+Object.defineProperty(exports, "scaffoldValidation", { enumerable: true, get: function () { return scaffolding_1.scaffoldValidation; } });
 const relationshipDiagram_1 = require("../visualizers/relationshipDiagram");
+// Register all commands in one place
 function registerCommands(context) {
     // Register existing command
     const infoCommand = vscode.commands.registerCommand("expresswebjs.someCommand", () => {
         vscode.window.showInformationMessage("ExpresswebJs command executed!");
     });
-    // Register scaffolding commands
-    const controllerCommand = vscode.commands.registerCommand("expresswebjs.scaffoldController", () => {
-        (0, scaffolding_1.scaffoldController)();
-    });
-    const routeCommand = vscode.commands.registerCommand("expresswebjs.scaffoldRoute", () => {
-        (0, scaffolding_1.scaffoldRoute)();
-    });
-    const middlewareCommand = vscode.commands.registerCommand("expresswebjs.scaffoldMiddleware", () => {
-        (0, scaffolding_1.scaffoldMiddleware)();
-    });
-    const serviceProviderCommand = vscode.commands.registerCommand("expresswebjs.scaffoldServiceProvider", () => {
-        (0, scaffolding_1.scaffoldServiceProvider)();
-    });
-    // Register new scaffolding commands
-    const jobCommand = vscode.commands.registerCommand("expresswebjs.scaffoldJob", () => {
-        (0, scaffolding_1.scaffoldJob)();
-    });
-    const commandCommand = vscode.commands.registerCommand("expresswebjs.scaffoldCommand", () => {
-        (0, scaffolding_1.scaffoldCommand)();
-    });
-    const validationCommand = vscode.commands.registerCommand("expresswebjs.scaffoldValidation", () => {
-        (0, scaffolding_1.scaffoldValidation)();
-    });
-    // Register object relationship diagram command
-    const showRelationshipDiagramCommand = vscode.commands.registerCommand("expresswebjs.showRelationshipDiagram", async () => {
+    // Register all commands here
+    context.subscriptions.push(infoCommand, vscode.commands.registerCommand("expresswebjs.scaffoldController", scaffolding_1.scaffoldController), vscode.commands.registerCommand("expresswebjs.scaffoldRoute", scaffolding_1.scaffoldRoute), vscode.commands.registerCommand("expresswebjs.scaffoldMiddleware", scaffolding_1.scaffoldMiddleware), vscode.commands.registerCommand("expresswebjs.scaffoldServiceProvider", scaffolding_1.scaffoldServiceProvider), vscode.commands.registerCommand("expresswebjs.scaffoldJob", scaffolding_1.scaffoldJob), vscode.commands.registerCommand("expresswebjs.scaffoldCommand", scaffolding_1.scaffoldCommand), vscode.commands.registerCommand("expresswebjs.scaffoldValidation", scaffolding_1.scaffoldValidation), vscode.commands.registerCommand("expresswebjs.showRelationshipDiagram", async () => {
         try {
             const diagramProvider = relationshipDiagram_1.RelationshipDiagramProvider.getInstance(context);
             await diagramProvider.openDiagram();
@@ -64,9 +60,7 @@ function registerCommands(context) {
         catch (error) {
             vscode.window.showErrorMessage(`Error showing relationship diagram: ${error}`);
         }
-    });
-    // Register refresh diagram command
-    const refreshRelationshipDiagramCommand = vscode.commands.registerCommand("expresswebjs.refreshRelationshipDiagram", async () => {
+    }), vscode.commands.registerCommand("expresswebjs.refreshRelationshipDiagram", async () => {
         try {
             const diagramProvider = relationshipDiagram_1.RelationshipDiagramProvider.getInstance(context);
             await diagramProvider.refreshDiagram();
@@ -74,8 +68,6 @@ function registerCommands(context) {
         catch (error) {
             vscode.window.showErrorMessage(`Error refreshing relationship diagram: ${error}`);
         }
-    });
-    context.subscriptions.push(infoCommand, controllerCommand, routeCommand, middlewareCommand, serviceProviderCommand, jobCommand, commandCommand, validationCommand, showRelationshipDiagramCommand, refreshRelationshipDiagramCommand);
+    }));
 }
-exports.registerCommands = registerCommands;
 //# sourceMappingURL=index.js.map
