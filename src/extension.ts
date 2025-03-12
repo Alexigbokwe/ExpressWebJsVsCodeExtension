@@ -1,49 +1,57 @@
+import * as ts from "typescript";
 import * as vscode from "vscode";
-import { registerCommands } from "./commands/index";
+import { registerCommands } from "./commands";
 import { clearProjectCache } from "./utils/relationshipAnalyzer";
 import { RelationshipDiagramProvider } from "./visualizers/relationshipDiagram";
 import { ExpressWebJsCommandsProvider } from "./treeViewProvider";
 
-let treeView: vscode.TreeView<any> | undefined;
+// Store references at module level
 let commandsProvider: ExpressWebJsCommandsProvider | undefined;
+let treeView: vscode.TreeView<any> | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
   console.log("ExpresswebJs extension is now active");
 
-  // Register commands - this should register scaffoldController already
-  registerCommands(context);
-
-  // Only create the tree view if it doesn't exist
-  if (!treeView) {
-    // Create the provider and store a reference to it
+  // Create the provider first before registering any commands that might use it
+  try {
+    console.log("Creating TreeView provider");
     commandsProvider = new ExpressWebJsCommandsProvider(context);
 
-    // Create the tree view using the provider
+    // Register the tree data provider and create the view
+    console.log("Registering TreeView provider");
     treeView = vscode.window.createTreeView("expresswebjs-commands", {
       treeDataProvider: commandsProvider,
       showCollapseAll: true,
     });
+
     context.subscriptions.push(treeView);
+    console.log("TreeView provider registered successfully");
+  } catch (error) {
+    console.error("Error registering TreeView provider:", error);
   }
 
-  // Register the refresh command for the treeview
+  // AFTER creating the provider, register the refresh command
   context.subscriptions.push(
     vscode.commands.registerCommand("expresswebjs.refreshTreeView", () => {
-      // Use the stored provider reference instead of trying to access it through treeView
+      console.log("Refreshing tree view");
       if (commandsProvider) {
         commandsProvider.refresh();
+      } else {
+        console.error("Cannot refresh tree view: provider not initialized");
       }
     })
   );
 
-  // Register the package analysis command if needed
-  // Make sure it's not already registered in registerCommands
-  // context.subscriptions.push(
-  //   vscode.commands.registerCommand('expresswebjs.analyzePackages', () => {
-  //     // Implementation for package analysis
-  //     vscode.window.showInformationMessage('Package Analysis Started');
-  //   })
-  // );
+  // Register the executeCommand command
+  context.subscriptions.push(
+    vscode.commands.registerCommand("expresswebjs.executeCommand", (item) => {
+      console.log("Executing command for item:", item);
+      vscode.window.showInformationMessage(`Command executed: ${item?.label || "Unknown"}`);
+    })
+  );
+
+  // Register other commands
+  registerCommands(context);
 
   // Clear relationship cache when files change
   const fileWatcher = vscode.workspace.createFileSystemWatcher("**/*.{ts,js}");

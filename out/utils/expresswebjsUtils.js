@@ -15,30 +15,15 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseConfig = parseConfig;
-exports.validateConfig = validateConfig;
-exports.formatErrorMessage = formatErrorMessage;
-exports.getDefinition = getDefinition;
-exports.findControllers = findControllers;
-exports.findRoutes = findRoutes;
+exports.findRoutes = exports.findControllers = exports.getDefinition = exports.formatErrorMessage = exports.validateConfig = exports.parseConfig = void 0;
 const vscode = __importStar(require("vscode"));
 function parseConfig(config) {
     try {
@@ -48,14 +33,17 @@ function parseConfig(config) {
         throw new Error("Invalid configuration format: " + error.message);
     }
 }
+exports.parseConfig = parseConfig;
 function validateConfig(config, schema) {
     // Implement validation logic against the schema
     // This is a placeholder for actual validation logic
     return true;
 }
+exports.validateConfig = validateConfig;
 function formatErrorMessage(error) {
     return `Error: ${error.message}`;
 }
+exports.formatErrorMessage = formatErrorMessage;
 function getDefinition(word, document) {
     // This is a simplified implementation
     // In a real-world scenario, you'd parse the document or workspace
@@ -71,6 +59,7 @@ function getDefinition(word, document) {
             return null;
     }
 }
+exports.getDefinition = getDefinition;
 // Helper function to find ExpressWebJs controllers in the workspace
 async function findControllers() {
     if (!vscode.workspace.workspaceFolders) {
@@ -79,6 +68,7 @@ async function findControllers() {
     const pattern = new vscode.RelativePattern(vscode.workspace.workspaceFolders[0], "**/controllers/**/*.{js,ts}");
     return await vscode.workspace.findFiles(pattern);
 }
+exports.findControllers = findControllers;
 // Helper function to find ExpressWebJs routes in the workspace
 async function findRoutes() {
     if (!vscode.workspace.workspaceFolders) {
@@ -87,4 +77,5 @@ async function findRoutes() {
     const pattern = new vscode.RelativePattern(vscode.workspace.workspaceFolders[0], "**/routes/**/*.{js,ts}");
     return await vscode.workspace.findFiles(pattern);
 }
+exports.findRoutes = findRoutes;
 //# sourceMappingURL=expresswebjsUtils.js.map

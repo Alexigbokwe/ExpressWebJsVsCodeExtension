@@ -1,7 +1,17 @@
 # The following contents should be placed in the file: /expresswebjs-extension/expresswebjs-extension/.vscodeignore
 
-**.vscode/**
-**node_modules/**
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+.yarnrc
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/tslint.json
+**/*.map
+**/*.ts
+node_modules/**
+!node_modules/typescript/**
 **.git/**
 **.DS_Store**
 **.env**

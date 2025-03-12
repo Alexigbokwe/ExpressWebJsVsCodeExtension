@@ -1,3 +1,4 @@
+import * as ts from "typescript";
 import * as vscode from "vscode";
 import { scaffoldController, scaffoldRoute, scaffoldMiddleware, scaffoldServiceProvider, scaffoldJob, scaffoldCommand, scaffoldValidation } from "./scaffolding";
 import { RelationshipDiagramProvider } from "../visualizers/relationshipDiagram";
@@ -34,6 +35,10 @@ export function registerCommands(context: vscode.ExtensionContext) {
       } catch (error) {
         vscode.window.showErrorMessage(`Error refreshing relationship diagram: ${error}`);
       }
+    }),
+    vscode.commands.registerCommand("expresswebjs.executeCommand", (item) => {
+      // This is a placeholder for the context menu item
+      vscode.window.showInformationMessage(`Command executed: ${item?.label || "Unknown"}`);
     })
   );
 }

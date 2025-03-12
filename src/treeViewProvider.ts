@@ -1,3 +1,4 @@
+import * as ts from "typescript";
 import * as vscode from "vscode";
 
 /**
@@ -24,13 +25,14 @@ interface CommandCategory {
  */
 class ExpressWebJsTreeItem extends vscode.TreeItem {
   categoryIndex?: number;
-  commandCategory?: number;
+  commandIndex?: number;
+
   constructor(
     label: string,
     collapsibleState: vscode.TreeItemCollapsibleState,
     options?: {
       categoryIndex?: number;
-      commandCategory?: number;
+      commandIndex?: number;
       command?: vscode.Command;
       description?: string;
       tooltip?: string;
@@ -41,7 +43,7 @@ class ExpressWebJsTreeItem extends vscode.TreeItem {
 
     if (options) {
       this.categoryIndex = options.categoryIndex;
-      this.commandCategory = options.commandCategory;
+      this.commandIndex = options.commandIndex;
       this.command = options.command;
       this.description = options.description;
       this.tooltip = options.tooltip;
@@ -85,7 +87,7 @@ export class ExpressWebJsCommandsProvider implements vscode.TreeDataProvider<Exp
             description: "Create a new middleware",
           },
           {
-            label: "Service Provider",
+            label: "ServiceProvider",
             command: "expresswebjs.scaffoldServiceProvider",
             description: "Create a new service provider",
           },
@@ -122,17 +124,6 @@ export class ExpressWebJsCommandsProvider implements vscode.TreeDataProvider<Exp
           },
         ],
       },
-      // {
-      //   label: "📦 Package Analysis",
-      //   collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
-      //   commands: [
-      //     {
-      //       label: "Analyze Dependencies",
-      //       command: "expresswebjs.analyzePackages",
-      //       description: "Analyze project dependencies",
-      //     },
-      //   ],
-      // },
     ];
   }
 
@@ -140,6 +131,7 @@ export class ExpressWebJsCommandsProvider implements vscode.TreeDataProvider<Exp
    * Refresh the tree view
    */
   refresh(): void {
+    console.log("Refreshing ExpressWebJs commands tree view");
     this._onDidChangeTreeData.fire(null);
   }
 
@@ -150,34 +142,31 @@ export class ExpressWebJsCommandsProvider implements vscode.TreeDataProvider<Exp
    * @returns The children elements
    */
   getChildren(element?: ExpressWebJsTreeItem): Thenable<ExpressWebJsTreeItem[]> {
+    // For debugging
+    console.log("getChildren called", element);
+
     if (!element) {
       // Root level - return all categories
       return Promise.resolve(this.categories.map((category, index) => this._createCategoryItem(category, index)));
     }
 
     // If element is a category, return its commands
-    if (element.categoryIndex !== undefined) {
+    if (element.categoryIndex !== undefined && element.commandIndex === undefined) {
       const category = this.categories[element.categoryIndex];
-      return Promise.resolve(category.commands.map((cmd, index) => this._createCommandItem(cmd, element.categoryIndex!)));
+      return Promise.resolve(category.commands.map((cmd, index) => this._createCommandItem(cmd, element.categoryIndex!, index)));
     }
 
     return Promise.resolve([]);
   }
 
   /**
-   * Get the parent of an element - required for TreeDataProvider
+   * Get the parent of an element
    */
   getParent(element: ExpressWebJsTreeItem): vscode.ProviderResult<ExpressWebJsTreeItem> {
-    if (element.categoryIndex !== undefined && element.commandCategory === undefined) {
-      // This is a category item, no parent
-      return null;
+    if (element.categoryIndex !== undefined && element.commandIndex !== undefined) {
+      // This is a command item, return its parent category
+      return this._createCategoryItem(this.categories[element.categoryIndex], element.categoryIndex);
     }
-
-    if (element.commandCategory !== undefined) {
-      // Command items - return their parent category
-      return this._createCategoryItem(this.categories[element.commandCategory], element.commandCategory);
-    }
-
     return null;
   }
 
@@ -190,28 +179,24 @@ export class ExpressWebJsCommandsProvider implements vscode.TreeDataProvider<Exp
 
   /**
    * Create a tree item for a category
-   *
-   * @param category - Category data
-   * @param index - Category index
-   * @returns The created TreeItem
    */
   private _createCategoryItem(category: CommandCategory, index: number): ExpressWebJsTreeItem {
-    return new ExpressWebJsTreeItem(category.label, category.collapsibleState, {
+    const item = new ExpressWebJsTreeItem(category.label, category.collapsibleState, {
       categoryIndex: index,
       contextValue: "expresswebjsCategory",
     });
+
+    item.tooltip = `${category.commands.length} commands`;
+    return item;
   }
 
   /**
    * Create a tree item for a command
-   *
-   * @param cmdData - Command data
-   * @param categoryIndex - Parent category index
-   * @returns The created TreeItem
    */
-  private _createCommandItem(cmdData: CommandItem, categoryIndex: number): ExpressWebJsTreeItem {
+  private _createCommandItem(cmdData: CommandItem, categoryIndex: number, commandIndex: number): ExpressWebJsTreeItem {
     return new ExpressWebJsTreeItem(cmdData.label, vscode.TreeItemCollapsibleState.None, {
-      commandCategory: categoryIndex,
+      categoryIndex: categoryIndex,
+      commandIndex: commandIndex,
       command: {
         command: cmdData.command,
         title: cmdData.label,
