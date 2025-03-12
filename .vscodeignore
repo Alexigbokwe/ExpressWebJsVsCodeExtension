@@ -1,0 +1,11 @@
+# The following contents should be placed in the file: /expresswebjs-extension/expresswebjs-extension/.vscodeignore
+
+**.vscode/**
+**node_modules/**
+**out/**
+**.git/**
+**.DS_Store**
+**.env**
+**.npmrc**
+**package-lock.json**
+**tsconfig.tsbuildinfo**

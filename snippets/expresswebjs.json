@@ -1,0 +1,52 @@
+{
+  "ExpressWebJs App": {
+    "prefix": "ewjs-app",
+    "body": ["const { App } = require('expresswebjs');", "const app = new App();", "", "// Start the server", "app.startApp();"],
+    "description": "Create a new ExpressWebJs app"
+  },
+  "ExpressWebJs Controller": {
+    "prefix": "ewjs-controller",
+    "body": ["const { Controller } = require('expresswebjs');", "", "class ${1:MyController} extends Controller {", "\tconstructor() {", "\t\tsuper();", "\t}", "\t", "\tindex(request, response) {", "\t\t$0", "\t}", "}", "", "module.exports = ${1:MyController};"],
+    "description": "Create an ExpressWebJs controller"
+  },
+  "ExpressWebJs Route": {
+    "prefix": "ewjs-route",
+    "body": ["const { Router } = require('expresswebjs');", "const router = new Router();", "", "router.${1|get,post,put,delete,patch|}('/${2:path}', (request, response) => {", "\t$0", "});", "", "module.exports = router;"],
+    "description": "Create an ExpressWebJs route"
+  },
+  "ExpressWebJs Middleware": {
+    "prefix": "ewjs-middleware",
+    "body": ["const { Middleware } = require('expresswebjs');", "", "class ${1:MyMiddleware} extends Middleware {", "\thandle(request, response, next) {", "\t\t$0", "\t\tnext();", "\t}", "}", "", "module.exports = ${1:MyMiddleware};"],
+    "description": "Create an ExpressWebJs middleware"
+  },
+  "ExpressWebJs Model": {
+    "prefix": "ewjs-model",
+    "body": ["const { Model } = require('expresswebjs');", "", "class ${1:MyModel} extends Model {", "\tstatic table = '${2:${1/(.*)/${1:/downcase}/}s}';", "\t", "\t$0", "}", "", "module.exports = ${1:MyModel};"],
+    "description": "Create an ExpressWebJs model"
+  },
+  "ExpressWebJs Request Input": {
+    "prefix": "ewjs-input",
+    "body": ["const ${1:value} = request.input('${2:field}');"],
+    "description": "Get input from ExpressWebJs request"
+  },
+  "ExpressWebJs Request All": {
+    "prefix": "ewjs-all",
+    "body": ["const ${1:data} = request.all();"],
+    "description": "Get all inputs from ExpressWebJs request"
+  },
+  "ExpressWebJs Response Send": {
+    "prefix": "ewjs-send",
+    "body": ["response.send(${1:'Hello World'});"],
+    "description": "Send response in ExpressWebJs"
+  },
+  "ExpressWebJs Response JSON": {
+    "prefix": "ewjs-json",
+    "body": ["response.json({", "\t${1:key}: ${2:value}", "});"],
+    "description": "Send JSON response in ExpressWebJs"
+  },
+  "ExpressWebJs View": {
+    "prefix": "ewjs-view",
+    "body": ["response.view('${1:view}', {", "\t${2:key}: ${3:value}", "});"],
+    "description": "Render a view in ExpressWebJs"
+  }
+}

@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "tsc -p .",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$tsc"],
+            "detail": "Compiles the TypeScript files."
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "npm test",
+            "group": "test",
+            "problemMatcher": ["$eslint-stylish"],
+            "detail": "Runs the tests for the extension."
+        }
+    ]
+}

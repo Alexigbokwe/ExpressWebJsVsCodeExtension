@@ -1,0 +1,139 @@
+{
+  "name": "expresswebjs-extension",
+  "displayName": "ExpresswebJs Extension",
+  "description": "A Visual Studio Code extension for the ExpresswebJs framework, providing code completion, navigation, and utilities.",
+  "version": "0.1.0",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "expresswebjs.someCommand",
+        "title": "ExpresswebJs: Execute Command"
+      },
+      {
+        "command": "expresswebjs.scaffoldController",
+        "title": "ExpresswebJs: Create Controller"
+      },
+      {
+        "command": "expresswebjs.scaffoldRoute",
+        "title": "ExpresswebJs: Create Route"
+      },
+      {
+        "command": "expresswebjs.scaffoldMiddleware",
+        "title": "ExpresswebJs: Create Middleware"
+      },
+      {
+        "command": "expresswebjs.scaffoldServiceProvider",
+        "title": "ExpresswebJs: Create ServiceProvider"
+      },
+      {
+        "command": "expresswebjs.scaffoldJob",
+        "title": "ExpresswebJs: Create Job"
+      },
+      {
+        "command": "expresswebjs.scaffoldCommand",
+        "title": "ExpresswebJs: Create Command"
+      },
+      {
+        "command": "expresswebjs.scaffoldValidation",
+        "title": "ExpresswebJs: Create Validation"
+      },
+      {
+        "command": "expresswebjs.showRelationshipDiagram",
+        "title": "ExpresswebJs: Show Object Relationship Diagram"
+      },
+      {
+        "command": "expresswebjs.refreshRelationshipDiagram",
+        "title": "ExpresswebJs: Refresh Object Relationship Diagram"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./snippets/expresswebjs.json"
+      },
+      {
+        "language": "typescript",
+        "path": "./snippets/expresswebjs.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "expresswebjs.scaffoldController",
+        "key": "ctrl+shift+c",
+        "mac": "cmd+shift+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldRoute",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldMiddleware",
+        "key": "ctrl+shift+m",
+        "mac": "cmd+shift+m",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldServiceProvider",
+        "key": "ctrl+shift+s",
+        "mac": "cmd+shift+s",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldJob",
+        "key": "ctrl+shift+j",
+        "mac": "cmd+shift+j",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldCommand",
+        "key": "ctrl+shift+d",
+        "mac": "cmd+shift+d",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.scaffoldValidation",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "expresswebjs.showRelationshipDiagram",
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.0.0",
+    "@types/vscode": "^1.98.0",
+    "ts-loader": "^8.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5",
+    "vscode-test": "^1.6.1"
+  }
+}
