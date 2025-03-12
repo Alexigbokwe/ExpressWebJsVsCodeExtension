@@ -11,7 +11,7 @@ This extension provides support for the ExpresswebJs framework, enhancing the de
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/expresswebjs-extension.git
+   git clone https://github.com/Alexigbokwe/ExpressWebJsVsCodeExtension.git
    ```
 2. Navigate to the extension directory:
    ```
@@ -29,7 +29,7 @@ This extension provides support for the ExpresswebJs framework, enhancing the de
 
 ## Usage
 
-Once the extension is installed and activated, you can start using the features immediately in your ExpresswebJs projects. 
+Once the extension is installed and activated, you can start using the features immediately in your ExpresswebJs projects.
 
 - **Code Completion**: Start typing ExpresswebJs code, and suggestions will appear automatically.
 - **Definition Navigation**: Hold `Ctrl` (or `Cmd` on macOS) and click on any ExpresswebJs component to jump to its definition.
