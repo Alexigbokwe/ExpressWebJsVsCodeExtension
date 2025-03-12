@@ -1,4 +1,4 @@
-# <img src="images/icon.png" width="37"> ExpresswebJs Extension for Visual Studio Code
+# <img src="https://github.com/Alexigbokwe/ExpressWebJsVsCodeExtension/blob/main/images/icon.png" width="37"> ExpresswebJs Extension for Visual Studio Code
 
 This extension provides support for the ExpressWebJs framework, enhancing the development experience with features such as code completion, definition navigation, and visual relationship diagrams.
 
