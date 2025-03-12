@@ -4,8 +4,9 @@
   "description": "A Visual Studio Code extension for the ExpresswebJs framework, providing code completion, navigation, and utilities.",
   "version": "0.1.0",
   "publisher": "Chukwuemeka_Igbokwe",
+  "icon": "images/icon.png",
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.98.0"
   },
   "categories": [
     "Programming Languages",
