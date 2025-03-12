@@ -98,6 +98,9 @@
     }
   }
 
+  // Add this to your initialization code, after DOM elements are initialized
+  let metricsPanel;
+
   // Initialize UI based on state
   function initializeUI() {
     if (toggleMethodsCheckbox) toggleMethodsCheckbox.checked = state.showMethods;
@@ -123,14 +126,14 @@
     relationshipCheckboxes.forEach((checkbox) => {
       checkbox.checked = state.enabledRelationships.includes(checkbox.value);
     });
+
+    // Create metrics panel
+    metricsPanel = createMetricsPanel();
   }
 
   // Set up event listeners
   function setupEventListeners() {
     // Search functionality
-    if (searchButton) {
-      searchButton.addEventListener("click", performSearch);
-    }
 
     if (resetSearchButton) {
       resetSearchButton.addEventListener("click", resetSearch);
@@ -965,6 +968,19 @@
       svg.call(zoomBehavior.transform, d3.zoomIdentity.translate(initialX, initialY).scale(initialScale));
 
       console.log("Diagram rendering complete");
+
+      // IMPORTANT: Calculate and update metrics AFTER everything else is done
+      // This ensures all graph data is available for metrics calculation
+      setTimeout(() => {
+        // Slight delay to ensure rendering is complete
+        try {
+          const diagramMetrics = calculateMetrics(state.data.nodes, filteredEdges);
+          updateMetricsPanel(diagramMetrics);
+          console.log("Metrics updated successfully");
+        } catch (metricsError) {
+          console.error("Error updating metrics:", metricsError);
+        }
+      }, 100);
     } catch (error) {
       console.error("Fatal error in renderDiagram:", error);
       showError("Failed to render diagram: " + error.message);
@@ -1453,5 +1469,371 @@
 
   function showGroupDebugInfo() {
     // Existing function code...
+  }
+
+  // Add this function to create the metrics panel
+  function createMetricsPanel() {
+    const panelContainer = document.createElement("div");
+    panelContainer.id = "metrics-panel";
+    panelContainer.className = "panel";
+
+    // Create toggle button for the panel
+    const toggleButton = document.createElement("button");
+    toggleButton.className = "panel-toggle";
+    toggleButton.innerHTML = '<span class="icon">📊</span> Metrics';
+    toggleButton.onclick = function () {
+      panelContainer.classList.toggle("expanded");
+    };
+
+    // Create panel content
+    const panelContent = document.createElement("div");
+    panelContent.className = "panel-content";
+
+    // Create sections for different metrics
+    const sectionsHTML = `
+      <div class="panel-section">
+        <h3>Connection Metrics</h3>
+        <div id="most-connected-nodes" class="metrics-list"></div>
+      </div>
+      <div class="panel-section">
+        <h3>Dependency Chains</h3>
+        <div id="longest-chains" class="metrics-list"></div>
+      </div>
+      <div class="panel-section">
+        <h3>General Statistics</h3>
+        <div id="general-stats" class="metrics-list"></div>
+      </div>
+    `;
+
+    panelContent.innerHTML = sectionsHTML;
+
+    // Assemble the panel
+    panelContainer.appendChild(toggleButton);
+    panelContainer.appendChild(panelContent);
+
+    // Add to the document
+    const appContainer = document.querySelector(".diagram-container") || document.body;
+    appContainer.appendChild(panelContainer);
+
+    return panelContainer;
+  }
+
+  // Add these functions to calculate and display metrics
+  function calculateMetrics(nodes, edges) {
+    // Check if inputs are valid
+    if (!Array.isArray(nodes) || !Array.isArray(edges)) {
+      console.error("Invalid inputs to calculateMetrics:", { nodes, edges });
+      return null;
+    }
+
+    try {
+      // Build node connection map
+      const nodeConnections = {};
+      nodes.forEach((node) => {
+        if (!node || !node.id) {
+          console.warn("Skipping invalid node in metrics:", node);
+          return;
+        }
+
+        nodeConnections[node.id] = {
+          inbound: 0,
+          outbound: 0,
+          total: 0,
+          node: node,
+        };
+      });
+
+      // Count connections
+      edges.forEach((edge) => {
+        if (!edge || !edge.source || !edge.target) {
+          console.warn("Skipping invalid edge in metrics:", edge);
+          return;
+        }
+
+        if (nodeConnections[edge.source]) {
+          nodeConnections[edge.source].outbound++;
+          nodeConnections[edge.source].total++;
+        }
+        if (nodeConnections[edge.target]) {
+          nodeConnections[edge.target].inbound++;
+          nodeConnections[edge.target].total++;
+        }
+      });
+
+      // Most connected nodes (by total connections)
+      const mostConnected = Object.values(nodeConnections)
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5);
+
+      // Most dependent nodes (highest inbound)
+      const mostDependedOn = Object.values(nodeConnections)
+        .sort((a, b) => b.inbound - a.inbound)
+        .slice(0, 5);
+
+      // Most dependent on others (highest outbound)
+      const mostDependentOnOthers = Object.values(nodeConnections)
+        .sort((a, b) => b.outbound - a.outbound)
+        .slice(0, 5);
+
+      // Find longest dependency chains
+      const longestChains = findLongestDependencyChains(nodes, edges);
+
+      // Calculate general statistics
+      const generalStats = {
+        totalNodes: nodes.length,
+        totalEdges: edges.length,
+        avgConnectionsPerNode: edges.length / nodes.length,
+        mostCommonNodeType: findMostCommonNodeType(nodes),
+        mostCommonRelationship: findMostCommonRelationship(edges),
+      };
+
+      return {
+        mostConnected,
+        mostDependedOn,
+        mostDependentOnOthers,
+        longestChains,
+        generalStats,
+        nodeConnections,
+      };
+    } catch (error) {
+      console.error("Error calculating metrics:", error);
+      return null;
+    }
+  }
+
+  // Helper function to find longest dependency chains
+  function findLongestDependencyChains(nodes, edges) {
+    // Create adjacency list
+    const graph = {};
+    nodes.forEach((node) => {
+      graph[node.id] = [];
+    });
+
+    edges.forEach((edge) => {
+      if (graph[edge.source]) {
+        graph[edge.source].push(edge.target);
+      }
+    });
+
+    // Find longest paths using DFS
+    const visited = {};
+    const pathLengths = {};
+    const longestPaths = {};
+    let maxLength = 0;
+
+    function dfs(nodeId, path) {
+      visited[nodeId] = true;
+      path.push(nodeId);
+
+      // If we haven't seen this node or found a longer path to it
+      const currentLength = path.length;
+      if (!pathLengths[nodeId] || currentLength > pathLengths[nodeId]) {
+        pathLengths[nodeId] = currentLength;
+        longestPaths[nodeId] = [...path];
+
+        if (currentLength > maxLength) {
+          maxLength = currentLength;
+        }
+      }
+
+      // Visit neighbors
+      for (const neighbor of graph[nodeId] || []) {
+        if (!visited[neighbor]) {
+          dfs(neighbor, path);
+        }
+      }
+
+      path.pop();
+      visited[nodeId] = false;
+    }
+
+    // Run DFS from each node
+    nodes.forEach((node) => {
+      dfs(node.id, []);
+    });
+
+    // Get the top 3 longest chains
+    const longestChains = [];
+    Object.entries(longestPaths).forEach(([nodeId, path]) => {
+      if (path.length >= maxLength - 2) {
+        // Get paths close to max length
+        longestChains.push({
+          startNode: nodeId,
+          length: path.length,
+          path: path,
+        });
+      }
+    });
+
+    return longestChains.sort((a, b) => b.length - a.length).slice(0, 3);
+  }
+
+  // Helper function to find most common node type
+  function findMostCommonNodeType(nodes) {
+    const typeCounts = {};
+    nodes.forEach((node) => {
+      if (!typeCounts[node.type]) typeCounts[node.type] = 0;
+      typeCounts[node.type]++;
+    });
+
+    let maxCount = 0;
+    let mostCommonType = "Unknown";
+
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonType = type;
+      }
+    });
+
+    return {
+      type: mostCommonType,
+      count: maxCount,
+      percentage: Math.round((maxCount / nodes.length) * 100),
+    };
+  }
+
+  // Helper function to find most common relationship
+  function findMostCommonRelationship(edges) {
+    const relationshipCounts = {};
+    edges.forEach((edge) => {
+      if (!relationshipCounts[edge.relationship]) {
+        relationshipCounts[edge.relationship] = 0;
+      }
+      relationshipCounts[edge.relationship]++;
+    });
+
+    let maxCount = 0;
+    let mostCommonRelationship = "Unknown";
+
+    Object.entries(relationshipCounts).forEach(([relationship, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        mostCommonRelationship = relationship;
+      }
+    });
+
+    return {
+      relationship: mostCommonRelationship,
+      count: maxCount,
+      percentage: Math.round((maxCount / edges.length) * 100),
+    };
+  }
+
+  // Add a function to check if the metrics panel exists and create it if needed:
+  function ensureMetricsPanelExists() {
+    if (!document.getElementById("metrics-panel")) {
+      createMetricsPanel();
+    }
+  }
+
+  // Update the updateMetricsPanel function to be more robust:
+  function updateMetricsPanel(metrics) {
+    // Make sure the panel exists
+    ensureMetricsPanelExists();
+
+    if (!metrics) {
+      console.warn("No metrics available to update panel");
+
+      // Update panel with placeholder content
+      const sections = ["most-connected-nodes", "longest-chains", "general-stats"];
+      sections.forEach((sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.innerHTML = '<div class="metric-item">No data available</div>';
+        }
+      });
+
+      return;
+    }
+
+    // Update most connected nodes section
+    const mostConnectedNodes = document.getElementById("most-connected-nodes");
+    mostConnectedNodes.innerHTML = metrics.mostConnected
+      .map(
+        (item) => `
+      <div class="metric-item">
+        <span class="metric-name highlight-node" data-node-id="${item.node.id}">${item.node.name}</span>
+        <span class="metric-value">${item.total} connections
+          <span class="metric-badge">↑${item.outbound}</span>
+          <span class="metric-badge">↓${item.inbound}</span>
+        </span>
+      </div>
+    `
+      )
+      .join("");
+
+    // Update longest chains section
+    const longestChains = document.getElementById("longest-chains");
+    longestChains.innerHTML = metrics.longestChains
+      .map((chain) => {
+        const startNode = chain.path[0];
+        const endNode = chain.path[chain.path.length - 1];
+
+        return `
+        <div class="metric-item">
+          <span class="metric-name">
+            <span class="highlight-node" data-node-id="${startNode}">${startNode}</span> → 
+            <span class="highlight-node" data-node-id="${endNode}">${endNode}</span>
+          </span>
+          <span class="metric-value">${chain.length} nodes</span>
+        </div>
+      `;
+      })
+      .join("");
+
+    // Update general stats section
+    const generalStats = document.getElementById("general-stats");
+    generalStats.innerHTML = `
+      <div class="metric-item">
+        <span class="metric-name">Average Connections</span>
+        <span class="metric-value">${metrics.generalStats.avgConnectionsPerNode.toFixed(1)}</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-name">Most Common Type</span>
+        <span class="metric-value">${metrics.generalStats.mostCommonNodeType.type} 
+          <span class="metric-badge">${metrics.generalStats.mostCommonNodeType.percentage}%</span>
+        </span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-name">Most Common Relationship</span>
+        <span class="metric-value">${metrics.generalStats.mostCommonRelationship.relationship}
+          <span class="metric-badge">${metrics.generalStats.mostCommonRelationship.percentage}%</span>
+        </span>
+      </div>
+    `;
+
+    // Add click handlers to node highlights
+    document.querySelectorAll(".highlight-node").forEach((element) => {
+      element.addEventListener("click", function () {
+        const nodeId = this.getAttribute("data-node-id");
+        highlightNode(nodeId);
+      });
+    });
+  }
+
+  // Function to highlight a specific node in the diagram
+  function highlightNode(nodeId) {
+    // Clear any previous highlights
+    d3.selectAll("g.node rect").classed("highlighted", false);
+
+    // Highlight the selected node
+    d3.select(`g.node[id='${nodeId}'] rect`).classed("highlighted", true);
+
+    // If we have the renderer, try to center on the node
+    if (state.renderer && state.renderer.graph && state.renderer.graph.node(nodeId)) {
+      const nodeData = state.renderer.graph.node(nodeId);
+      const svg = d3.select("#diagram");
+      const width = diagram.clientWidth;
+      const height = diagram.clientHeight;
+
+      // Calculate transform to center on the node
+      const scale = 1.5;
+      const x = width / 2 - nodeData.x * scale;
+      const y = height / 2 - nodeData.y * scale;
+
+      // Apply the transform
+      svg.transition().duration(750).call(state.renderer.zoomBehavior.transform, d3.zoomIdentity.translate(x, y).scale(scale));
+    }
   }
 })();
