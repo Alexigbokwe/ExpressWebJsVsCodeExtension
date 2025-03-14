@@ -47,14 +47,14 @@ export class ${convertToPascalCase(controllerName)} extends BaseController {
     /**
      * Index method
      */
-    index(req: Request, res: Response) {
+    public async index(req: Request, res: Response) {
         return this.response.OK(res, { message: 'Hello from ${controllerName}' });
     }
     
     /**
      * Show method
      */
-    show(req: Request, res: Response) {
+    public async show(req: Request, res: Response) {
         const id = req.params["id"];
         return this.response.OK(res, { data: id });
     }
@@ -62,14 +62,14 @@ export class ${convertToPascalCase(controllerName)} extends BaseController {
     /**
      * Store method
      */
-    store(req: Request, res: Response) {
+    public async store(req: Request, res: Response) {
         return this.response.CREATED(res);
     }
     
     /**
      * Update method
      */
-    update(req: Request, res: Response) {
+    public async update(req: Request, res: Response) {
         const id = req.params["id"];
         const data = req.body;
         return this.response.OK(res, { message: 'Updated successfully', id, data });
@@ -78,7 +78,7 @@ export class ${convertToPascalCase(controllerName)} extends BaseController {
     /**
      * Destroy method
      */
-    destroy(req: Request, res: Response) {
+    public async destroy(req: Request, res: Response) {
         const id = req.params["id"];
         return this.response.OK(res, { message: 'Deleted successfully', id });
     }
@@ -117,13 +117,13 @@ export async function scaffoldRoute(): Promise<void> {
 
 /*
 |--------------------------------------------------------------------------
-| Route File   
+| "${routeName}" Route File   
 |--------------------------------------------------------------------------
 | Example of closure route 
 | Route.get("/",(req:Request,res:Response)=>{}); 
 |
 | Example of controller route.
-| Route.get("/","UserController@index");
+| Route.get("/","${routeName}Controller@index");
 | 
 */
 
